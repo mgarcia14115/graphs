@@ -1,7 +1,7 @@
 
 import java.util.*;
 public class Solution{
-    public boolean canFinish(int numCourses, int[][] prerequisites) {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
         Graph g = new Graph();
         for(int i = 0 ;i < numCourses;i++){
             g.addVertex(i);
@@ -14,7 +14,25 @@ public class Solution{
 
         g.DFS();
 
-        return g.acyclic;
+        if(g.acyclic){
+            
+            mylist list = new mylist();
+
+            for(int id :g.keys){
+                Node u = g.vertices.get(id);
+                    list.insert(u);
+            }
+            int [] a = new int[list.size];
+            Node j = list.head;
+            for(int i = 0 ;i < a.length;i++){
+                a[i] = j.id;
+                
+                j = j.next;
+            }
+            return a;
+        }
+        int [] emp = {};
+       return emp; 
     }
     
 
@@ -117,7 +135,7 @@ public class Solution{
             
         }
 
-   
+     
         
 
     }
@@ -128,13 +146,14 @@ public class Solution{
         Node pred;
         int dist;
         int finishtime;
-
+        Node next;
         public Node(int id){
             this.id = id;
             color = "white";
             pred = null;
             dist = 0;
-            finishtime = 0; 
+            finishtime = 0;
+            next = null; 
         }
 
         public boolean equals(Object obj){
@@ -157,5 +176,64 @@ public class Solution{
 
     }
 
+
+    public static class mylist{
+
+        Node head;
+        int size;
+        public mylist(){
+            this.size = 0;
+            this.head = null;
+        }
+        //sort from greatest to least finish time.
+        public void insert(Node u){
+            
+            if(this.head == null){
+                //no head
+                this.head = u; 
+                size++;
+                return;
+
+            }else{
+                if(u.finishtime > this.head.finishtime){
+                   // new node is head.
+                    u.next = this.head;
+                    this.head = u; 
+                    size++;
+                    return;
+                }
+
+                
+                Node i = this.head;
+                while(i != null){
+                    if(i.next != null){
+                        if(u.finishtime > i.next.finishtime){
+                            
+                            u.next = i.next;
+                            i.next = u; 
+                            size++;
+                            return;
+                        }
+                    }else{
+
+                        i.next = u;
+                        size++;
+                        return;
+                    }
+                    
+                    
+                    i = i.next;
+                } 
+
+
+               
+            }
+
+           
+        }
+
+
+
+    }
 
 }
